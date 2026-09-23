@@ -34,23 +34,17 @@ export class TransformInterceptor<T> implements NestInterceptor<
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<ApiResponse<T>> {
-    // TODO [Estudiante 1] Paso 1: obtén el contexto HTTP.
-    //   const http = context.switchToHttp();
-    //   const request = http.getRequest<Request>();
-    //   const response = http.getResponse<Response>();
+    const http = context.switchToHttp();
+    const request = http.getRequest<Request>();
+    const response = http.getResponse<Response>();
 
-    // TODO [Estudiante 1] Paso 2: "engancha" el flujo de la respuesta con
-    //   next.handle().pipe( map((data) => ({ ... })) )
-    //   y construye el objeto con:
-    //     - statusCode → response.statusCode  (200 en GET, 201 en POST)
-    //     - timestamp  → new Date().toISOString()
-    //     - path       → request.url
-    //     - data       → lo que devolvió el controller
-    //
-    // Pregunta para pensar: ¿por qué hay que leer `response.statusCode`
-    // DENTRO del map() y no antes?
-
-    // ⬇️ Reemplaza esta línea por tu implementación.
-    return next.handle() as unknown as Observable<ApiResponse<T>>;
+    return next.handle().pipe(
+      map((data) => ({
+        statusCode: response.statusCode,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        data,
+      })),
+    );
   }
 }
