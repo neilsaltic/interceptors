@@ -49,6 +49,19 @@ export class TimeoutInterceptor implements NestInterceptor {
     // de esperarlo?
 
     // ⬇️ Reemplaza esta línea por tu implementación.
-    return next.handle();
+
+    //1. APLICAR TIMEOUT(this.timeoutMs)
+    return next.handle().pipe(
+      timeout(this.timeoutMs),
+
+      //2. ERRORES
+      catchError((err) => {
+        if(err instanceof TimeoutError) {
+          return throwError(() => new RequestTimeoutException(`La petición excedió el tiempo límite de ${this.timeoutMs} ms`,),
+        );
+        }
+        return throwError(() => err);
+      })
+    )
   }
-}
+};
