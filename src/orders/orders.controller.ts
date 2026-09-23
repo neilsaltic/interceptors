@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto } from './dto/create-order.dto.js';
 import { OrdersService } from './orders.service.js';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiRequestTimeoutResponse } from '@nestjs/swagger';
@@ -17,11 +18,6 @@ import { Order } from './entities/order.entity.js';
 // El CRUD ya funciona. Aquí solo hay que agregar decoradores de Swagger
 // (todos se importan desde '@nestjs/swagger').
 //
-// TODO [Estudiante 1 - Swagger]: describe QUÉ hace cada endpoint.
-//   - @ApiTags('orders') sobre la clase, para agruparlos en Swagger UI.
-//   - @ApiOperation({ summary: '...', description: '...' }) en cada método.
-//   - @ApiParam({ name: 'id', description: '...', example: 1 }) en GET /orders/:id.
-//
 // TODO [Estudiante 3 - Swagger]: describe QUÉ puede responder cada endpoint.
 //   - @ApiOkResponse({ type: Order }) / @ApiOkResponse({ type: [Order] })
 //   - @ApiCreatedResponse({ type: Order }) en POST
@@ -32,6 +28,7 @@ import { Order } from './entities/order.entity.js';
 // Coordinen entre ustedes: ambos editan este archivo (hagan commits pequeños).
 // =============================================================================
 
+@ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
