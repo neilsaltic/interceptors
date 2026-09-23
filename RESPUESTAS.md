@@ -1,4 +1,10 @@
+Pregunta 2. Timeout: Cuando se dispara el 408, ¿el setTimeout de 4.5 s del servicio se cancela de verdad, o solo dejamos de esperarlo?
+Solo dejamos de esperarlo para que nos muestre el error de una vez.
+¿Qué implicaría eso con una consulta real a una base de datos?
+En segundo plano sigue ejecutando hasta los segundo que le falte (en este caso 4.5) lo que haría una falta de recursos y se llenaría de solicitudes pendientes el servidor, haciendo que el servidor se ralentice y surjan errores.
+
 Pregunta 3. Logging: ¿por qué con tap(() => ...) las peticiones que fallan no se loguean? ¿Qué alternativa ofrece tap({ next, error }) o finalize()?
+Respuesta.- si usamos solo tap(()=>...) entonces las peticiones que fallan no se muestran es por eso que existe tap({next, error}) en este codigo en el apartado de next se ejecuta si todo lo que pasa por el interceptor esta bien osea tiene exito, pero si ocurre un error entonces se va al apartado error, y se ejecuta el error mostrando detalles, y ahora tambien existe un apartado que es finalize(), pero ese se ejecuta si o si .. osea no le importa si es exitosa o erronea la peticion ... si o si se ejecuta y en el proyecto actual no es algo correcto por que necesitamos saber si o si si el proceso es exitoso o erroneo
 Respuesta.- si usamos solo tap(()=>...) entonces las peticiones que fallan no se muestran es por eso que existe tap({next, error}) en este codigo en el apartado de next se ejecuta si todo lo que pasa por el interceptor esta bien osea tiene exito, pero si ocurre un error entonces se va al apartado error, y se ejecuta el error mostrando detalles, y ahora tambien existe un apartado que es finalize(), pero ese se ejecuta si o si .. osea no le importa si es exitosa o erronea la peticion ... si o si se ejecuta y en el proyecto actual no es algo correcto por que necesitamos saber si o si si el proceso es exitoso o erroneo
 -------------------------------------------------------------------------------------------
 
