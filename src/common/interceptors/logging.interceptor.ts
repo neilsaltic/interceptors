@@ -30,6 +30,11 @@ export class LoggingInterceptor implements NestInterceptor {
     //   Obtén `method` y `url` desde context.switchToHttp().getRequest<Request>()
     //   y guarda el instante de inicio: const start = Date.now();
 
+    const request = context.switchToHttp().getRequest<Request>();
+    const method = request.method;
+    const url = request.url;
+    const start = Date.now();
+
     // TODO [Estudiante 2] Paso 2: el código dentro de tap() corre DESPUÉS del
     //   controller, cuando ya hay respuesta:
     //     next.handle().pipe(
@@ -40,12 +45,24 @@ export class LoggingInterceptor implements NestInterceptor {
     //     )
     //   donde ms = Date.now() - start.
     //
+    return next.handle().pipe(
+      tap({
+        next: () => {
+          const ms = Date.now() - start;
+          this.logger.log(`${method} ${url} ${ms}ms`);
+        },
+        error: (error) => {
+          const ms = Date.now() - start;
+          this.logger.error(`${method} ${url} ${ms}ms - ${error.message}`);
+        },
+      }),
+    );
+
     // ⚠️ Usa this.logger (el Logger de Nest), NO console.log. Los tests lo verifican.
     //
     // Pregunta para pensar: si solo usas tap(() => ...), ¿qué pasa con las
     // peticiones que terminan en error (404, 408)? ¿Se loguean?
 
     // ⬇️ Reemplaza esta línea por tu implementación.
-    return next.handle();
   }
 }
