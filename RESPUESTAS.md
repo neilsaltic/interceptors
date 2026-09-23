@@ -17,6 +17,16 @@ Sí, seguiría limpiando los datos siempre y cuando la función de sanitización
 La otra estrategia es usar el ClassSerializerInterceptor global de NestJS junto con los decoradores @Exclude() y @Expose() de la librería class-transformer directamente en la entidad o en un DTO de salida dedicado.
 Preferencia en producción: Se prefiere ampliamente ClassSerializerInterceptor. ¿Por qué? Porque es declarativo y vive junto a la definición del modelo. Es mucho más seguro y fácil de auditar, ya que evita la fragilidad de mantener listas manuales de strings (como REMOVED_FIELDS), reduce el riesgo de errores humanos al agregar nuevos campos sensibles y escala mejor en aplicaciones grandes con múltiples modelos.
 
-3. Documentación real en Swagger 
+3. Documentación real en Swagger
 Pregunta: La documentación dice que GET /orders/1 devuelve un Order, pero en realidad el cliente recibe { statusCode, timestamp, path, data: Order }. ¿Cómo lo documentarían bien?
 Para documentarlo correctamente, se debe crear una clase genérica de respuesta (ej. ApiResponseDto<T>) que refleje la estructura real del wrapper. Luego, en el controlador, se puede usar un decorador personalizado (como sugiere el reto bonus: @ApiWrappedResponse(Order)) que utilice ApiExtraModels(Order) y getSchemaPath(Order) de @nestjs/swagger. Esto le indica a Swagger que genere el esquema anidado correctamente, mostrando en la UI el ejemplo real con statusCode, timestamp, path y el objeto data con el modelo Order dentro.
+
+## Pregunta 5. Swagger — Estudiante 1
+
+La documentación dice que GET /orders/1 devuelve un Order, pero en realidad el cliente recibe { statusCode, timestamp, path, data: Order }. ¿Cómo lo documentarían bien?
+
+**Respuesta:** Yo documentaría la respuesta completa, porque mi interceptor no devuelve el pedido solo, sino que lo coloca dentro de data y agrega statusCode, timestamp y path. Entonces, en Swagger deberían aparecer esos cuatro campos para que quien use la API sepa qué va a recibir.
+
+En data pondría el modelo Order cuando se consulta un pedido por su id. Para GET /orders pondría un arreglo de Order, porque devuelve varios pedidos. También indicaría que statusCode es un número, timestamp es una fecha en formato de texto y path es la ruta de la petición.
+
+Para no repetir esta documentación en cada endpoint, se podría crear un decorador llamado @ApiWrappedResponse(Order), usando ApiExtraModels para registrar el modelo y getSchemaPath para referenciarlo dentro de data. Los errores se documentarían aparte, porque mi interceptor no los envuelve. Así la documentación coincidiría con la respuesta real de la API.
